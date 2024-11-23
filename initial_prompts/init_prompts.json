@@ -1,0 +1,27 @@
+{
+    "batch_1": {
+        "num_of_params": [
+            "Implement a function that takes one parameter to add a node to the front of the list.",
+            "Write a function that takes no parameters and returns the value of the node at the front.",
+            "Create a function that takes two parameters and applies given transformation to adjacent nodes.",
+            "Design a function that takes a vector parameter and converts it into a linked list.",
+            "Write a function with no parameter to calculate the length of the list."
+        ],
+        "type_of_params": [
+            "Create a function that takes a generic T parameter to insert an element at the back of the list.",
+            "Write a function that accepts a vector of generic type T to construct a new list.",
+            "Implement a function that uses a closure as a parameter to apply a mapping function on each element.",
+            "Design a function that takes a closure with two T arguments and applies it to adjacent pairs of elements.",
+            "Write a function where the input parameter is a nested linked list to flatten into one list."
+    
+        ],
+        "context_length": [
+            "Complete the push_front function for a singly linked list using the provided Node struct and head field.",
+            "Implement the pop_front function for a singly linked list using the Node and Option types.",
+            "Create the from_vec function using the given Node struct and head pointer.",
+            "Write the map function by transforming elements using the provided closure.",
+            "Finish the flatten function, merging nested lists using the provided structures."
+    
+        ]
+    }
+}
