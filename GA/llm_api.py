@@ -17,4 +17,7 @@ def call_openai_api(prompt):
         prompt=prompt,
         max_tokens=100
     )
+    
+    # TODO: parse the only code section from the response
+
     return response.choices[0].text.strip()
