@@ -18,13 +18,15 @@ class RustCompilerErrorParser:
         self.errors = (
             OwnershipError,
             TypeMismatchError,
-            LifetimeError,
-            PatternMatchingError,
-            TraitImplementationError,
-            MutabilityError,
             BorrowCheckerError,
-            GenericConstraintError
-        )
+            TraitImplementationError,
+            UndefinedValueError,
+            MethodNotFoundError,
+            OperatorTypeError,
+            MutableBorrowError,
+            UndeclaredLifetimeError,
+            DerefFieldError,
+            )
 
     def parse_cargo_test_output(self):
         """
@@ -68,6 +70,8 @@ class RustCompilerErrorParser:
                         if code:
                             error_code = code.get('code', '')
                         else:
+                            #FIXME
+                            
                             continue
                         
                         # Determine error type
