@@ -15,6 +15,9 @@ client = OpenAI(
 
 
 def call_openai_api(prompt, model="gpt-4o-mini"):
+    # TODO: append the return structure of the response to prompt
+    prompt += f"\n"
+
     try:
         response = client.chat.completions.create(
             model=model,
@@ -27,12 +30,13 @@ def call_openai_api(prompt, model="gpt-4o-mini"):
             ],
         )
         # TODO: parse the only code section from the response
-        return response["choices"][0]["message"]["content"].strip()
+        return response.choices[0].message.content.strip()
     except Exception as e:
         print("Error on openai.ChatCompletion.create: ", e)
 
 
 if __name__ == "__main__":
-    call_openai_api(
+    res = call_openai_api(
         "Write a Python function that takes a list of numbers and returns the sum of the list."
     )
+    print(res)
