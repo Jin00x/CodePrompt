@@ -1,12 +1,10 @@
 import os
 import openai
-from dotenv import load_dotenv
+from dotenv import load_dotenv, dotenv_values
 from openai import OpenAI
 
-# Load the .env file
-load_dotenv()
 # Get the API key from the .env file
-api_key = os.getenv("LLM_API_KEY")
+api_key = dotenv_values(".env")["LLM_API_KEY"]
 # Set the API key
 openai.api_key = api_key
 
