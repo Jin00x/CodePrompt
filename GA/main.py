@@ -30,7 +30,7 @@ class Solution:
             file.write(self.code_string)
 
         # run the code, set capture_output to True to get the output and error msg
-        res = subprocess.run(['cargo', 'run'], cwd='linked_list/src', capture_output=True, text=True)
+        res = subprocess.run(['cargo', 'test'], cwd='../linked_list/src', capture_output=True, text=True)
         res_output, res_err = res.stdout, res.stderr
 
         # clean the test.rs file
