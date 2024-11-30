@@ -7,6 +7,9 @@ import math
 import random
 import numpy as np
 
+from error_message_parser import RustCompilerErrorParser
+from compiler_error import CompilerError
+
 
 class Solution:
     def __init__(
@@ -14,41 +17,43 @@ class Solution:
         prompt: str = "", 
         code_string: str = "", 
         fitness: float = float('inf'), 
-        run_fitness: bool = False
+        run_fitness: bool = False,
+        err_parser: RustCompilerErrorParser = None
     ):
         self.prompt = prompt
         self.code_string = code_string
         self.fitness = fitness
+        self.err_parser = err_parser
 
         if run_fitness is True:
             self.eval_fitness()
     
     # runs the test file on given rust code, and returns output and error
-    def run_code(self) -> Tuple[str, str]:
+    def run_code(self) -> float:
         # Write the code_string to test.rs
         with open('test.rs', 'w') as file:
             file.write(self.code_string)
 
         # run the code, set capture_output to True to get the output and error msg
-        res = subprocess.run(['cargo', 'test'], cwd='../linked_list/src', capture_output=True, text=True)
-        res_output, res_err = res.stdout, res.stderr
+        errors: List[CompilerError] = self.err_parser.parse_cargo_test_output()
+        score = sum([err.score for err in errors])
 
         # clean the test.rs file
         with open('test.rs', 'w') as file:
             file.write('')
 
-        return res_output, res_err
+        return score
 
     # calculate the fitness
     def eval_fitness(self) -> float:
         # prompt llm, and set the code string field
         self.generate_code()
 
-        # run the code, and get the output and error
-        output, error = self.run_code()
+        # run the code, and get the fitness score
+        score = self.run_code()
         
         # set fitness
-        self.fitness = self.calc_fitness(output, error)
+        self.fitness = score
         return self.fitness
     
     # call prompt to get code from llm
@@ -76,10 +81,17 @@ def GA(
     probability_based_sample_method_type: ProbabilityBasedSampleMethodType = ProbabilityBasedSampleMethodType.ROULETTE_WHEEL,
     cross_over_type: CrossOverType = CrossOverType.SINGLE_POINT
 ) -> Solution:
+
+    # create instance of Rust error parser
+    project_path = "../linked_list/src"
+    err_parser = RustCompilerErrorParser()
+
     # create initial population
     population = []
     for i in range(initial_population_size):
-        solution = Solution()
+        solution = Solution(
+            err_parser=err_parser
+        )
         # solution.randomize()
         population.append(solution)
 
