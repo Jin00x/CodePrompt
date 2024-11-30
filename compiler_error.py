@@ -9,102 +9,97 @@ class CompilerError:
 
     @classmethod
     def class_code(cls):
-        return f"E0{cls.ERROR_CODE}"
-    
-    @classmethod
-    def class_code_for_debugging(cls):
-        return f"E0{cls.ERROR_CODE}"
+        return f"E{cls.ERROR_CODE:04}"
+
     def __str__(self):
-        return f"[E0{self.ERROR_CODE}] at line {self.line}, column {self.column}: {self.message}"
+        return f"[E{self.ERROR_CODE:04}] at line {self.line}, column {self.column}: {self.message}"
 
-class MovedValueError(CompilerError):
-    ERROR_CODE = 382
 
-    def __init__(self, line, column, message):
-        super().__init__(line, column, message)
-        self.score = 10
-        self.name = "Moved Value Error"
-
-    
 class TypeMismatchError(CompilerError):
-    ERROR_CODE = 308
+    ERROR_CODE = 308  # E0308: Mismatched types
 
     def __init__(self, line, column, message):
         super().__init__(line, column, message)
         self.score = 8
         self.name = "Type Mismatch Error"
 
-    
-class BorrowOneTimeError(CompilerError):
-    ERROR_CODE = 499
+
+class OwnershipError(CompilerError):
+    ERROR_CODE = 382  # E0382: Use of moved value
 
     def __init__(self, line, column, message):
         super().__init__(line, column, message)
-        self.score = 9
-        self.name = "Borrow One Time Error"
+        self.score = 10
+        self.name = "Ownership Error"
 
-    
-class PatternMatchingError(CompilerError):
-    ERROR_CODE = 504
 
-    def __init__(self, line, column, message):
-        super().__init__(line, column, message)
-        self.score = 6
-        self.name = "Pattern Matching Error"
-
-    
-class TraitImplementationError(CompilerError):
-    ERROR_CODE = 277
-
-    def __init__(self, line, column, message):
-        super().__init__(line, column, message)
-        self.score = 7
-        self.name = "Trait Implementation Error"
-
-    
-class ValueNotFoundScopeError(CompilerError):
-    ERROR_CODE = 425
-
-    def __init__(self, line, column, message):
-        super().__init__(line, column, message)
-        self.score = 5
-        self.name = "Value Not Found Scope Error"
-
-    
-class ConstStaticError(CompilerError):
-    ERROR_CODE = 507
-
-    def __init__(self, line, column, message):
-        super().__init__(line, column, message)
-        self.score = 6
-        self.name = "Const/Static Error"
-
-    
-class VisibilityError(CompilerError):
-    ERROR_CODE = 508
-
-    def __init__(self, line, column, message):
-        super().__init__(line, column, message)
-        self.score = 4
-        self.name = "Visibility Error"
-   
-    
-    
 class BorrowCheckerError(CompilerError):
-    ERROR_CODE = 382
+    ERROR_CODE = 499  # E0499: Cannot borrow as mutable more than once at a time
 
     def __init__(self, line, column, message):
         super().__init__(line, column, message)
         self.score = 9
         self.name = "Borrow Checker Error"
 
-    
-class GenericConstraintError(CompilerError):
-    ERROR_CODE = 510
+
+class TraitImplementationError(CompilerError):
+    ERROR_CODE = 277  # E0277: Trait not implemented
 
     def __init__(self, line, column, message):
         super().__init__(line, column, message)
         self.score = 7
-        self.name = "Generic Constraint Error"
+        self.name = "Trait Implementation Error"
 
-    
+
+class UndefinedValueError(CompilerError):
+    ERROR_CODE = 425  # E0425: Cannot find value in this scope
+
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 6
+        self.name = "Undefined Value Error"
+
+
+class MethodNotFoundError(CompilerError):
+    ERROR_CODE = 599  # E0599: No method named X found for type Y
+
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 7
+        self.name = "Method Not Found Error"
+
+
+class OperatorTypeError(CompilerError):
+    ERROR_CODE = 369  # E0369: Cannot apply binary operator to types
+
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 5
+        self.name = "Operator Type Error"
+
+
+class MutableBorrowError(CompilerError):
+    ERROR_CODE = 502  # E0502: Cannot borrow as immutable because it is also borrowed as mutable
+
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 8
+        self.name = "Mutable Borrow Error"
+
+
+class UndeclaredLifetimeError(CompilerError):
+    ERROR_CODE = 261  # E0261: Use of undeclared lifetime name
+
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 6
+        self.name = "Undeclared Lifetime Error"
+
+
+class DerefFieldError(CompilerError):
+    ERROR_CODE = 609  # E0609: Attempt to access a field of a type that does not implement Deref
+
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 5
+        self.name = "Deref Field Error"
