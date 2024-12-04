@@ -3,7 +3,6 @@ from compiler_error import *
 from collections import *  #FIXME this is not good practice 
 
 import subprocess
-import re
 import json
 import os
 
@@ -16,6 +15,7 @@ class RustCompilerErrorParser:
         """
         self.project_path = project_path
         self.errors = (
+            #TODO: Add more error classes
             OwnershipError,
             TypeMismatchError,
             BorrowCheckerError,
@@ -61,18 +61,17 @@ class RustCompilerErrorParser:
                         error_details = message.get('message', {})
                         
                         # Extract error specifics
+                        code = error_details.get('code', {})
+
+                        # if it is an actual error, we will have a code
+                        if code:
+                            error_code = code.get('code', '')
+                        else:
+                            continue
                         spans = error_details.get('spans', [{}])[0]
                         line = spans.get('line_start', 0)
                         column = spans.get('column_start', 0)
                         error_message = error_details.get('message', {})
-                        code = error_details.get('code', {})
-
-                        if code:
-                            error_code = code.get('code', '')
-                        else:
-                            #FIXME
-                            
-                            continue
                         
                         # Determine error type
                         error_class = CompilerError
@@ -132,8 +131,15 @@ class RustCompilerErrorParser:
 # Example usage
 def main():
     # Specify the path to your Rust project
-    project_path = '/Users/coll1ns/CS454---Team-project/linked_list'
-    
+    current_file_path = os.path.dirname(__file__)
+
+    # Construct the relative path
+    folder2_path = os.path.join(current_file_path, '../linked_list')
+
+    # Resolve to an absolute path
+    project_path = os.path.abspath(folder2_path)
+
+    print(project_path)    
     # Create parser instance
     parser = RustCompilerErrorParser(project_path)
     
