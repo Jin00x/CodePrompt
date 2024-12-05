@@ -42,80 +42,37 @@ impl<T: Debug> SinglyLinkedList<T> {
 
     /// Adds the given node to the front of the list.
     pub fn push_front(&mut self, value: T) {
-        let new_node = Node {
-            value,
-            next: self.head.take().map(Box::new),
-        };
-        self.head = Some(new_node);
+        todo!()
     }
 
     /// Adds the given node to the back of the list.
     pub fn push_back(&mut self, value: T) {
-        let new_node = Node { value, next: None };
-        match &mut self.head {
-            Some(mut current) => {
-                while let Some(next) = &mut current.next {
-                    current = next;
-                }
-                current.next = Some(Box::new(new_node));
-            }
-            None => self.head = Some(new_node),
-        }
+        todo!()
     }
 
     /// Removes and returns the node at the front of the list.
     pub fn pop_front(&mut self) -> Option<T> {
-        self.head.take().map(|head| {
-            self.head = head.next.map(|boxed| *boxed);
-            head.value
-        })
+        todo!()
     }
 
     /// Removes and returns the node at the back of the list.
     pub fn pop_back(&mut self) -> Option<T> {
-        match &mut self.head {
-            Some(mut current) => {
-                if current.next.is_none() {
-                    return self.head.take().map(|node| node.value);
-                }
-                while current.next.as_ref().unwrap().next.is_some() {
-                    current = current.next.as_mut().unwrap();
-                }
-                current.next.take().map(|boxed| boxed.value)
-            }
-            None => None,
-        }
+        todo!()
     }
 
     /// Create a new list from the given vector `vec`.
     pub fn from_vec(vec: Vec<T>) -> Self {
-        let mut list = Self::new();
-        for value in vec.into_iter().rev() {
-            list.push_front(value);
-        }
-        list
+        todo!()
     }
 
     /// Convert the current list into a vector.
     pub fn into_vec(self) -> Vec<T> {
-        let mut vec = Vec::new();
-        let mut current = self.head;
-        while let Some(node) = current {
-            vec.push(node.value);
-            current = node.next.map(|boxed| *boxed);
-        }
-        vec
+        todo!()
     }
 
     /// Return the length (i.e., number of nodes) of the list.
     pub fn length(&self) -> usize {
-        let mut count = 0;
-        let mut current = &self.head;
-        while let Some(node) = current {
-            count += 1;
-            current = &node.next;
-        }
-        count
+        todo!()
     }
 
     /// Apply function `f` on every element of the list.
@@ -124,13 +81,7 @@ impl<T: Debug> SinglyLinkedList<T> {
     ///
     /// `self`: `[1, 2]`, `f`: `|x| x + 1` ==> `[2, 3]`
     pub fn map<F: Fn(T) -> T>(self, f: F) -> Self {
-        let mut new_list = Self::new();
-        let mut current = self.head;
-        while let Some(node) = current {
-            new_list.push_back(f(node.value));
-            current = node.next.map(|boxed| *boxed);
-        }
-        new_list
+        todo!()
     }
 
     /// Apply given function `f` for each adjacent pair of elements in the list.
@@ -146,17 +97,7 @@ impl<T: Debug> SinglyLinkedList<T> {
     where
         T: Clone,
     {
-        let mut new_list = Self::new();
-        let mut current = self.head;
-        while let Some(node1) = current {
-            if let Some(node2) = node1.next.map(|boxed| *boxed) {
-                new_list.push_back(f(node1.value.clone(), node2.value.clone()));
-                current = node1.next.map(|boxed| *boxed);
-            } else {
-                break;
-            }
-        }
-        new_list
+        todo!()
     }
 }
 
@@ -168,15 +109,6 @@ impl<T: Debug> SinglyLinkedList<SinglyLinkedList<T>> {
     /// `self`: `[[1, 2, 3], [4, 5, 6], [7, 8]]`
     /// ==> `[1, 2, 3, 4, 5, 6, 7, 8]`
     pub fn flatten(self) -> SinglyLinkedList<T> {
-        let mut new_list = SinglyLinkedList::new();
-        let mut current = self.head;
-        while let Some(list) = current {
-            let inner_list = list.value;
-            for value in inner_list.into_vec() {
-                new_list.push_back(value);
-            }
-            current = list.next.map(|boxed| *boxed);
-        }
-        new_list
+        todo!()
     }
 }

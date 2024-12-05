@@ -1,7 +1,7 @@
 import subprocess
 from compiler_error import *
 from collections import *  #FIXME this is not good practice 
-
+import re 
 import subprocess
 import json
 import os
@@ -27,12 +27,14 @@ class RustCompilerErrorParser:
             UndeclaredLifetimeError,
             DerefFieldError,
             )
+        self.list_of_errors = None
+        self.passed = 0
+        self.failed = 0 
 
     def parse_cargo_test_output(self):
         """
-        Run cargo test and parse the output for compiler errors
-        
-        :return: List of CompilerError instances
+        Run cargo test and parse the output for compiler errors and run time result of the test. 
+        @return: List of CompilerError instances
         """
         try:
             # Change to the project directory
@@ -41,7 +43,7 @@ class RustCompilerErrorParser:
 
             # Run cargo test with JSON output
             result = subprocess.run(
-                ['cargo', 'test', '--no-run', '--message-format=json'], 
+                ['cargo', 'test', '--message-format=json'], #enable running as well..  
                 capture_output=True, 
                 text=True
             )
@@ -89,12 +91,15 @@ class RustCompilerErrorParser:
                         errors.append(error)
                 
                 except json.JSONDecodeError:
-                    # Skip lines that aren't valid JSON
-                    continue
+                    expr = r"(\d+)\s+passed;\s+(\d+)\s+failed;"
+                    match = re.search(expr, line)
+                    if match:
+                        self.passed = int(match.group(1))
+                        self.failed = int(match.group(2))
             
             # Change back to original directory
             os.chdir(original_dir)
-            
+            self.list_of_errors = errors
             return errors
 
         except subprocess.CalledProcessError as e:
@@ -104,18 +109,23 @@ class RustCompilerErrorParser:
             print(f"Unexpected error: {e}")
             return []
 
-    def generate_error_report(self):
+    def generate_report(self):
         """
         Generate a comprehensive error report
-        
-        :return: Dictionary with error statistics
+        @param: self
+        @return: Dictionary with error statistics and unit test result
         """
-        errors = self.parse_cargo_test_output()
+        if self.list_of_errors is None:
+            errors = self.parse_cargo_test_output()
+        else:
+            errors = self.list_of_errors
         
         report = {
             'total_errors': len(errors),
             'errors_by_type': {},
-            'total_score': 0
+            'total_score': 0,
+            'passed': self.passed,
+            'failed': self.failed
         }
         
         for error in errors:
@@ -125,6 +135,8 @@ class RustCompilerErrorParser:
             report['errors_by_type'][error_type] += 1
             
             report['total_score'] += error.score
+        if not (self.passed == 0 and self.failed == 0):
+            report['total_score'] = report['failed'] / (report['failed'] + report['passed'])
         
         return report
 
