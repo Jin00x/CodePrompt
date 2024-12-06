@@ -3,8 +3,11 @@ import openai
 from dotenv import load_dotenv, dotenv_values
 from openai import OpenAI
 
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+load_dotenv(env_path)
+
 # Get the API key from the .env file
-api_key = dotenv_values(".env")["LLM_API_KEY"]
+api_key = dotenv_values(env_path)["LLM_API_KEY"]
 # Set the API key
 openai.api_key = api_key
 
@@ -12,7 +15,6 @@ print("OpenAI API Key: ", api_key)
 client = OpenAI(
     api_key=api_key,
 )
-
 
 def call_openai_api(prompt, model="gpt-4o-mini"):
     # TODO: append the return structure of the response to prompt

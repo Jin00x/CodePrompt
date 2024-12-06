@@ -1,11 +1,10 @@
 
 from data_types import *
 from typing import List, Union, Tuple
-import subprocess
 from llm_api import *
-import math
 import random
 import numpy as np
+import json
 
 from error_message_parser import RustCompilerErrorParser
 from compiler_error import CompilerError
@@ -14,51 +13,55 @@ from compiler_error import CompilerError
 class Solution:
     def __init__(
         self, 
-        prompt: str = "", 
-        code_string: str = "", 
+        prompt: str = "",
+        code_string: str = "",
+        source_code: str = "",
         fitness: float = float('inf'), 
         run_fitness: bool = False,
         err_parser: RustCompilerErrorParser = None
     ):
         self.prompt = prompt
         self.code_string = code_string
+        self.source_code = source_code
         self.fitness = fitness
         self.err_parser = err_parser
 
         if run_fitness is True:
             self.eval_fitness()
     
-    # runs the test file on given rust code, and returns output and error
-    def run_code(self) -> float:
-        # Write the code_string to test.rs
-        with open('test.rs', 'w') as file:
-            file.write(self.code_string)
-
-        # run the code, set capture_output to True to get the output and error msg
-        errors: List[CompilerError] = self.err_parser.parse_cargo_test_output()
-        score = sum([err.score for err in errors])
-
-        # clean the test.rs file
-        with open('test.rs', 'w') as file:
-            file.write('')
-
-        return score
 
     # calculate the fitness
     def eval_fitness(self) -> float:
-        # prompt llm, and set the code string field
+        # generate the code from llm
         self.generate_code()
 
-        # run the code, and get the fitness score
-        score = self.run_code()
-        
+        # write the code to the linked_list_src.rs file
+        with open('../linked_list/src/linked_list.rs', 'w') as file:
+            file.write(self.code_string)
+
+        # run the code, collect the errors from parser
+        errors: List[CompilerError] = self.err_parser.parse_cargo_test_output()
+        score = sum([err.score for err in errors])
+
+        # print(len(errors), "errors found")
+        # print(self.code_string)
+
+        # for err in errors:
+        #     print(err.ERROR_CODE, err.message, err.score)
+
+        # clean the test file
+        with open('../linked_list/src/linked_list.rs', 'w') as file:
+            file.write('')
+
         # set fitness
         self.fitness = score
         return self.fitness
     
     # call prompt to get code from llm
     def generate_code(self) -> str:
+        print("Calling OpenAI API in Solution")
         llm_output = call_openai_api(self.prompt)
+        print("OpenAI API call finished in Solution")
         self.code_string = llm_output
         return llm_output
     
@@ -79,29 +82,45 @@ def GA(
     generation_limit: int = 20,
     s_in_ranking_based_selection: float = 1.5,
     probability_based_sample_method_type: ProbabilityBasedSampleMethodType = ProbabilityBasedSampleMethodType.ROULETTE_WHEEL,
-    cross_over_type: CrossOverType = CrossOverType.SINGLE_POINT
 ) -> Solution:
+    
+    current_file_path = os.path.dirname(__file__)
+    folder_path = os.path.join(current_file_path, '../linked_list')
+    project_path = os.path.abspath(folder_path)
 
     # create instance of Rust error parser
-    project_path = "../linked_list/src"
-    err_parser = RustCompilerErrorParser()
+    err_parser = RustCompilerErrorParser(project_path)
+
+    # read from the initial prompts json file
+    initial_prompts = []
+    with open('../initial_prompts/init_prompts.json', 'r') as file:
+        initial_prompts = json.load(file)
+        initial_prompts = initial_prompts['prompts']
+
+    source_code = ""
+    with open('../linked_list/src/linked_list.rs', 'r') as file:
+        source_code = file.read()
 
     # create initial population
     population = []
-    for i in range(initial_population_size):
+    for prompt in [initial_prompts[0]]:
         solution = Solution(
+            prompt=prompt + source_code,
+            code_string="",
+            source_code=source_code,
+            fitness=float('inf'),
+            run_fitness=True,
             err_parser=err_parser
         )
-        # solution.randomize()
         population.append(solution)
-
-    # mutate population for initial population
-    apply_mutation_to_population(population, mutation_rate)
+    print("Initial Population Created")
 
     # derive best current solution
     best_solution = min(population, key=eval_fitness)
+    print(f"Initial Best Solution: {best_solution.fitness}\n")
 
     for generation_num in range(generation_limit):
+        print(f"Generation: {generation_num + 1}")
         mating_pool = []
 
         #  if tournament based selection
@@ -120,12 +139,15 @@ def GA(
                 probability_based_sample_method_type,
                 mating_pool_size
             )
+        print("Mating Pool Created")
         
         # crossover
-        new_population = crossover_on_population(mating_pool, cross_over_type)
+        new_population = crossover_on_population(mating_pool)
+        print("Crossover Done")
 
         # mutation
         apply_mutation_to_population(new_population, mutation_rate)
+        print("Mutation Done")
 
         # selection from pools
         population = general_selection_based_on_type(
@@ -133,9 +155,11 @@ def GA(
             new_population,
             new_population_selection_type
         )
+        print("Selection Done")
 
         # update best solution
         best_solution = min(best_solution, min(population, key=eval_fitness), key=eval_fitness)
+        print(f"Best Solution: {best_solution.fitness}\n")
 
     return best_solution
 
@@ -205,52 +229,59 @@ def apply_mutation_to_population(
     population: List[Solution],
     mutation_rate: float
 ) -> None:
-    # mutation
+
     # TODO: Implement the mutation logic
-    pass
+
+    for sol in population:
+        mutation_prompt = f"""
+<prompt_here>
+Mutation Rate: {mutation_rate}
+"""
+    
+        mutated_prompt = call_openai_api(mutation_prompt)
+        sol.prompt = mutated_prompt
 
 
 def crossover_on_population(
     mating_pool: List[Solution], 
-    cross_over_type: CrossOverType
 ) -> List[Solution]:
-    # TODO: Implement the crossover logic
+    
+    new_population = []
+    for i in range(len(mating_pool) - 1):
+        for j in range(i + 1, len(mating_pool)):
+            new_population.append(
+                crossover_between_parents(
+                    mating_pool[i],
+                    mating_pool[j],
+                )
+            )
 
-    return None
+    return new_population
+
 
 def crossover_between_parents(
     parent1: Solution, 
     parent2: Solution,
-    cross_over_type: CrossOverType
 ) -> Solution:
+    
+    cross_over_prompt = f"""
+<prompt_here>
 
-    if cross_over_type == CrossOverType.SINGLE_POINT:
-        cross_index = random.sample(range(1, parent1.size() - 1), 1)[0]
-        child = parent1.copy()
-        
-        for i in range(cross_index, parent1.size()):
-            child.solution[i] = parent2.solution[i]
-        
-        return child
-
-    if cross_over_type == CrossOverType.TWO_POINT:
-        indexes = random.sample(range(1, parent1.size() - 2), k=2)
-        child = parent1.copy()
-
-        for i in range(indexes[0], indexes[1] + 1):
-            child.solution[i] = parent2.solution[i]
-
-        return child
-
-    # UNIFORM crossover
-    k = 5
-    indexes = random.sample(range(parent1.size()), k)
-    child = parent1.copy()
-
-    for i in indexes:
-        child.solution[i] = parent2.solution[i]
-
+Parent 1: {parent1.prompt}
+Parent 2: {parent2.prompt}
+"""
+    
+    child_prompt = call_openai_api(cross_over_prompt)
+    child = Solution(
+        prompt=child_prompt,
+        code_string="",
+        source_code=parent1.source_code,
+        fitness=float('inf'),
+        run_fitness=False,
+        err_parser=parent1.err_parser
+    )
     return child
+
 
 # needs valid population under budget
 def tournament_selection(
@@ -382,3 +413,10 @@ def improved_fps(
     for i in range(len(ranked_population)):
         ranked_population[i][0] /= total_fitness
     return ranked_population
+
+
+if __name__ == "__main__":
+    solution = GA()
+    print(f"Best Solution: {solution.prompt}\n")
+    print(f"Best Fitness: {solution.fitness}\n")
+    print(f"Best Code: {solution.code_string}\n")
