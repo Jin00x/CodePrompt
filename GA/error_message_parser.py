@@ -49,15 +49,10 @@ class RustCompilerErrorParser:
                 capture_output=True, 
                 text=True
             )
-            result_ = subprocess.run(
-                ['cargo', 'test'], #enable running as well..  
-                capture_output=True, 
-                text=True
-            )
-            output = result_.stdout + result_.stderr
+
+            # output = result_.stdout + result_.stderr
             # Collect errors
             errors = []
-            print(output)
             # Parse JSON output
             for line in result.stdout.split('\n'):
                 if not line.strip():
