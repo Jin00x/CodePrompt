@@ -59,7 +59,12 @@ class UndefinedValueError(CompilerError):
         self.score = 6
         self.name = "Undefined Value Error"
 
-
+class UndeclaredType(CompilerError):
+    ERROR_CODE = 433
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 10
+        self.name = "Undeclared Type Error"
 class MethodNotFoundError(CompilerError):
     ERROR_CODE = 599  # E0599: No method named X found for type Y
 
