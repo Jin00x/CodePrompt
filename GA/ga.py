@@ -96,7 +96,7 @@ def GA(
         initial_prompts = initial_prompts["prompts"]
 
     source_code = ""
-    with open("../linked_list/src/linked_list.rs", "r") as file:
+    with open("../linked_list/src/linked_list_src.rs", "r") as file:
         source_code = file.read()
 
     # create initial population
