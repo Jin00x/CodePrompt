@@ -51,8 +51,8 @@ class Solution:
         #     print(err.ERROR_CODE, err.message, err.score)
 
         # clean the test file
-        with open("../linked_list/src/linked_list.rs", "w") as file:
-            file.write("")
+        # with open("../linked_list/src/linked_list.rs", "w") as file:
+        #     file.write("")
 
         # set fitness
         self.fitness = score
@@ -69,7 +69,7 @@ Provide the code only, without any explanation or additional text.
 """
         llm_output = call_openai_api(code_prompt)
         print("OpenAI API call finished in Solution")
-        self.code_string = llm_output
+        self.code_string = llm_output[7:-3]
         return llm_output
 
     # TODO: Implement the fitness calculation logic
