@@ -38,8 +38,8 @@ class Solution:
             file.write(self.code_string)
 
         # run the code, collect the errors from parser
-        errors: List[CompilerError] = self.err_parser.parse_cargo_test_output()
-        score = sum([err.score for err in errors])
+        error_report = self.err_parser.generate_report()
+        score = error_report["total_score"]
 
         # print(len(errors), "errors found")
         # print(self.code_string)
