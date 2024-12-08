@@ -2,6 +2,7 @@ import os
 import openai
 from dotenv import load_dotenv, dotenv_values
 from openai import OpenAI
+import time
 
 env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
 load_dotenv(env_path)
@@ -67,7 +68,9 @@ def mutate_with_openai(
 
 
 if __name__ == "__main__":
+    start = time.time()
     res = call_openai_api(
         "Write a Python function that takes a list of numbers and returns the sum of the list."
     )
     print(res)
+    print(F"Time taken: {time.time() - start}")
