@@ -42,6 +42,8 @@ class Solution:
         error_report = self.err_parser.generate_report()
         score = error_report["total_score"]
 
+        print("Score from err parser: ", error_report)
+
         # print(len(errors), "errors found")
         # print(self.code_string)
 
@@ -59,7 +61,13 @@ class Solution:
     # call prompt to get code from llm
     def generate_code(self) -> str:
         print("Calling OpenAI API in Solution")
-        llm_output = call_openai_api(self.prompt + f"Code: \n {self.source_code}")
+        code_prompt = f"""
+{self.prompt} \n
+Code: \n
+{self.source_code} \n
+Provide the code only, without any explanation or additional text.
+"""
+        llm_output = call_openai_api(code_prompt)
         print("OpenAI API call finished in Solution")
         self.code_string = llm_output
         return llm_output
@@ -102,7 +110,7 @@ def GA(
 
     # create initial population
     population = []
-    for prompt in initial_prompts:
+    for prompt in random.sample(initial_prompts, 4):
         solution = Solution(
             prompt=prompt,
             code_string="",
@@ -438,7 +446,10 @@ def improved_fps(
 
 
 if __name__ == "__main__":
-    solution = GA()
+    solution = GA(
+        generation_limit=5,
+        mating_pool_size=2
+    )
     print(f"Best Solution: {solution.prompt}\n")
     print(f"Best Fitness: {solution.fitness}\n")
     print(f"Best Code: {solution.code_string}\n")
