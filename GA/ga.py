@@ -92,6 +92,8 @@ def GA(
 ) -> Solution:
 
     current_file_path = os.path.dirname(__file__)
+    project_folder_path = os.path.dirname(current_file_path)
+
     folder_path = os.path.join(current_file_path, "../linked_list")
     project_path = os.path.abspath(folder_path)
 
@@ -100,12 +102,12 @@ def GA(
 
     # read from the initial prompts json file
     initial_prompts = []
-    with open("../initial_prompts/init_prompts.json", "r") as file:
+    with open(f"{project_folder_path}/initial_prompts/init_prompts.json", "r") as file:
         initial_prompts = json.load(file)
         initial_prompts = initial_prompts["prompts"]
 
     source_code = ""
-    with open("../linked_list/src/linked_list_src.rs", "r") as file:
+    with open(f"{project_folder_path}/linked_list/src/linked_list_src.rs", "r") as file:
         source_code = file.read()
 
     # create initial population

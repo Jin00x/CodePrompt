@@ -23,6 +23,7 @@ class RustCompilerErrorParser:
             TraitImplementationError,
             UndefinedValueError,
             MethodNotFoundError,
+            UndeclaredType,
             OperatorTypeError,
             MutableBorrowError,
             UndeclaredLifetimeError,
@@ -48,10 +49,15 @@ class RustCompilerErrorParser:
                 capture_output=True, 
                 text=True
             )
-
+            result_ = subprocess.run(
+                ['cargo', 'test'], #enable running as well..  
+                capture_output=True, 
+                text=True
+            )
+            output = result_.stdout + result_.stderr
             # Collect errors
             errors = []
-            
+            print(output)
             # Parse JSON output
             for line in result.stdout.split('\n'):
                 if not line.strip():
@@ -141,32 +147,32 @@ class RustCompilerErrorParser:
         
         return report
 
-# Example usage
-def main():
-    # Specify the path to your Rust project
-    current_file_path = os.path.dirname(__file__)
+# # Example usage
+# def main():
+#     # Specify the path to your Rust project
+#     current_file_path = os.path.dirname(__file__)
 
-    # Construct the relative path
-    folder2_path = os.path.join(current_file_path, '../linked_list')
+#     # Construct the relative path
+#     folder2_path = os.path.join(current_file_path, '../linked_list')
 
-    # Resolve to an absolute path
-    project_path = os.path.abspath(folder2_path)
+#     # Resolve to an absolute path
+#     project_path = os.path.abspath(folder2_path)
 
-    print(project_path)    
-    # Create parser instance
-    parser = RustCompilerErrorParser(project_path)
+#     print(project_path)    
+#     # Create parser instance
+#     parser = RustCompilerErrorParser(project_path)
     
-    # Parse errors
-    errors = parser.parse_cargo_test_output()
+#     # Parse errors
+#     errors = parser.parse_cargo_test_output()
     
-    # Print individual errors
-    for error in errors:
-        print(error)
+#     # Print individual errors
+#     for error in errors:
+#         print(error)
     
-    # Generate error report
-    report = parser.generate_error_report()
-    print("\nError Report:")
-    print(json.dumps(report, indent=2))
+#     # Generate error report
+#     report = parser.generate_error_report()
+#     print("\nError Report:")
+#     print(json.dumps(report, indent=2))
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
