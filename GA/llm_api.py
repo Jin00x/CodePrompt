@@ -3,6 +3,7 @@ import openai
 from dotenv import load_dotenv, dotenv_values
 from openai import OpenAI
 import time
+import threading
 
 env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
 load_dotenv(env_path)
@@ -66,11 +67,35 @@ def mutate_with_openai(
         print("Error while calling OpenAI API:", e)
         return None
 
+def run_thread(prompt, results, index):
+    results[index] = call_openai_api(prompt)
+
 
 if __name__ == "__main__":
     start = time.time()
-    res = call_openai_api(
-        "Write a Python function that takes a list of numbers and returns the sum of the list."
-    )
-    print(res)
+    # res = call_openai_api(
+    #     "Write a Python function that takes a list of numbers and returns the sum of the list."
+    # )
+    # run the call_openai_api function twice in parallel
+
+    prompt = "Write a Python function that takes a list of numbers and returns the sum of the list."
+
+    res = [None, None, None]
+    thread1 = threading.Thread(target=run_thread, args=(prompt, res, 0))
+    thread2 = threading.Thread(target=run_thread, args=("give me a short haiku", res, 1))
+    thread3 = threading.Thread(target=run_thread, args=("give me a short haiku", res, 2))
+
+    thread1.start()
+    thread2.start()
+    thread3.start()
+
+    thread1.join()
+    thread2.join()
+    thread3.join()
+    
+    print(res[0])
+    print("------------------------------------------")
+    print(res[1])
+    print("------------------------------------------")
+    print(res[2])
     print(F"Time taken: {time.time() - start}")
