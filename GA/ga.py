@@ -249,8 +249,7 @@ def crossover_between_parents(
 ) -> Solution:
 
     cross_over_prompt = f"""
-<prompt_here>
-
+Cross over the following prompts and generate a new prompt, do not add additional information:
 Parent 1: {parent1.prompt}
 Parent 2: {parent2.prompt}
 """
