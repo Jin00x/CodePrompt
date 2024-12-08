@@ -6,7 +6,8 @@ import subprocess
 import json
 import os
 
-
+# FIXME class doesn't only parse the compiler errors now as well, it parses the normal test output as well
+#so the name should be changed to RustTestOutputParser or something similar
 class RustCompilerErrorParser:
     def __init__(self, project_path):
         """
@@ -115,10 +116,10 @@ class RustCompilerErrorParser:
         @param: self
         @return: Dictionary with error statistics and unit test result
         """
-        if self.list_of_errors is None:
-            errors = self.parse_cargo_test_output()
-        else:
-            errors = self.list_of_errors
+        # if self.list_of_errors is None:
+        errors = self.parse_cargo_test_output()
+        # else:
+            # errors = self.list_of_errors
         
         report = {
             'total_errors': len(errors),
