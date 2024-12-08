@@ -4,6 +4,7 @@ from llm_api import *
 import random
 import numpy as np
 import json
+import re
 
 from error_message_parser import RustCompilerErrorParser
 from compiler_error import CompilerError
@@ -58,7 +59,7 @@ class Solution:
     # call prompt to get code from llm
     def generate_code(self) -> str:
         print("Calling OpenAI API in Solution")
-        llm_output = call_openai_api(self.prompt)
+        llm_output = call_openai_api(self.prompt + f"Code: \n {self.source_code}")
         print("OpenAI API call finished in Solution")
         self.code_string = llm_output
         return llm_output
@@ -71,7 +72,7 @@ class Solution:
 
 def GA(
     initial_population_size: int = 50,
-    mating_pool_size: int = 20,
+    mating_pool_size: int = 10,
     selection_type: NextGenSelectionType = NextGenSelectionType.TRS,
     selection_type_prob_type: Union[RBSType, FPSType] = RBSType.LINEAR_RANKING,
     tournament_selection_size_k: int = 4,
@@ -101,9 +102,9 @@ def GA(
 
     # create initial population
     population = []
-    for prompt in [initial_prompts[0]]:
+    for prompt in initial_prompts:
         solution = Solution(
-            prompt=prompt + source_code,
+            prompt=prompt,
             code_string="",
             source_code=source_code,
             fitness=float("inf"),
@@ -138,12 +139,12 @@ def GA(
         print("Mating Pool Created")
 
         # crossover
-        new_population = crossover_on_population(mating_pool)
+        new_population = crossover_and_mutation_on_population(mating_pool)
         print("Crossover Done")
 
-        # mutation
-        apply_mutation_to_population(new_population, mutation_rate)
-        print("Mutation Done")
+        # # mutation
+        # apply_mutation_to_population(new_population, mutation_rate)
+        # print("Mutation Done")
 
         # selection from pools
         population = general_selection_based_on_type(
@@ -226,21 +227,63 @@ def apply_mutation_to_population(
         sol.prompt = mutated_prompt
 
 
-def crossover_on_population(
+def crossover_and_mutation_on_population(
     mating_pool: List[Solution],
 ) -> List[Solution]:
+    
+    prompt = f"""
+Please follow the instruction step-by-step to generate a better prompt.
 
+1. Cross over the following each pair prompts and generate a new prompt:
+
+Prompt pairs:
+
+"""
+    
+    print(f"Mating Pool: {len(mating_pool)}")
+    
     new_population = []
+    index = 1
     for i in range(len(mating_pool) - 1):
         for j in range(i + 1, len(mating_pool)):
-            new_population.append(
-                crossover_between_parents(
-                    mating_pool[i],
-                    mating_pool[j],
-                )
+            prompt += f"""
+Pair {index}:
+Prompt 1:  {mating_pool[i].prompt}
+Prompt 2:  {mating_pool[j].prompt} \n
+"""
+            index += 1
+
+    prompt += f"""
+
+2. Mutate the prompts generated in Step 1 and generate a final prompts, each bracketed with <prompt> and </prompt>.
+
+Return only the final outputs, no additional information or text needed.
+"""
+    
+    # print(f"Prompt: \n{prompt} \n\n\n")
+    
+    new_prompts = call_openai_api(prompt)
+    # parse the new prompts
+
+    new_prompts = parse_crossover_and_mutation_prompts(new_prompts)
+    for prompt in new_prompts:
+        new_population.append(
+            Solution(
+                prompt=prompt,
+                code_string="",
+                source_code=mating_pool[0].source_code,
+                fitness=float("inf"),
+                run_fitness=True,
+                err_parser=mating_pool[0].err_parser,
             )
+        )
 
     return new_population
+
+
+def parse_crossover_and_mutation_prompts(result: str) -> List[str]:
+    matches = re.findall(r'<prompt>(.*?)</prompt>', result)
+    return matches
 
 
 def crossover_between_parents(
