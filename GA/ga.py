@@ -130,6 +130,7 @@ def GA(
     # derive best current solution
     best_solution = min(population, key=eval_fitness)
     print(f"Initial Best Solution: {best_solution.fitness}\n")
+    write_prompt_to_file(best_solution.prompt)
 
     for generation_num in range(generation_limit):
         print(f"Generation: {generation_num + 1}")
@@ -173,8 +174,15 @@ def GA(
             best_solution, min(population, key=eval_fitness), key=eval_fitness
         )
         print(f"Best Solution: {best_solution.fitness}\n")
+        write_prompt_to_file(best_solution.prompt)
 
     return best_solution
+
+
+# write/append the prompt to the prompts.txt file
+def write_prompt_to_file(prompt: str) -> None:
+    with open("prompts.txt", "a") as file:
+        file.write(prompt + "\n")
 
 
 def run_api_threads(population: List[Solution]) -> None:
