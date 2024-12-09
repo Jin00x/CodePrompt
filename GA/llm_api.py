@@ -19,7 +19,7 @@ client = OpenAI(
 )
 
 
-def call_openai_api(prompt, model="gpt-4o-mini"):
+def call_openai_api(prompt, model="gpt-4o"):
     # TODO: append the return structure of the response to prompt
     prompt += f"\n"
 

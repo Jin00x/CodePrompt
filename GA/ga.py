@@ -62,13 +62,14 @@ class Solution:
     def generate_code(self) -> str:
         print("Calling OpenAI API in Solution")
         code_prompt = f"""
-{self.prompt} \n
-Code: \n
-{self.source_code} \n
-Provide the code only, without any explanation or additional text.
-"""
+            {self.prompt} \n
+            Code: \n
+            {self.source_code} \n
+            Provide the code only, without any explanation or additional text.
+        """
         llm_output = call_openai_api(code_prompt)
         print("OpenAI API call finished in Solution")
+        write_prompt_to_file(llm_output)
         self.code_string = llm_output[7:-3]
         return llm_output
 
@@ -112,7 +113,7 @@ def GA(
 
     # create initial population
     population = []
-    for prompt in random.sample(initial_prompts, 5):
+    for prompt in initial_prompts:
         solution = Solution(
             prompt=prompt,
             code_string="",
@@ -150,11 +151,11 @@ def GA(
                 probability_based_sample_method_type,
                 mating_pool_size,
             )
-        print("Mating Pool Created")
+        print(f"Mating Pool Created {len(mating_pool)}")
 
         # crossover
         new_population = crossover_and_mutation_on_population(mating_pool)
-        print("Crossover Done")
+        print(f"Crossover Done, and length of new population {len(new_population)}")
 
         run_api_threads(new_population)
         print("New population Fitness Calculated")
@@ -181,7 +182,8 @@ def GA(
 
 # write/append the prompt to the prompts.txt file
 def write_prompt_to_file(prompt: str) -> None:
-    with open("prompts.txt", "a") as file:
+    prompts_file = os.path.dirname(__file__) + "/prompts.txt"
+    with open(prompts_file, "a") as file:
         file.write(prompt + "\n")
 
 
@@ -299,10 +301,12 @@ Prompt 2:  {mating_pool[j].prompt} \n
 Return only the final outputs, no additional information or text needed.
 """
     
-    # print(f"Prompt: \n{prompt} \n\n\n")
+    print(f"Prompt pair num: \n{index} \n\n\n")
     
     new_prompts = call_openai_api(prompt)
     # parse the new prompts
+
+    write_prompt_to_file(new_prompts)
 
     new_prompts = parse_crossover_and_mutation_prompts(new_prompts)
     for prompt in new_prompts:
@@ -478,8 +482,8 @@ def improved_fps(
 
 if __name__ == "__main__":
     solution = GA(
-        generation_limit=5,
-        mating_pool_size=2
+        generation_limit=10,
+        mating_pool_size=9
     )
     print(f"Best Solution: {solution.prompt}\n")
     print(f"Best Fitness: {solution.fitness}\n")

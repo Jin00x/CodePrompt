@@ -1,8 +1,4 @@
 
-//! Singly linked list.
-//!
-//! Consult <https://doc.rust-lang.org/book/ch15-01-box.html>.
-
 use std::fmt::Debug;
 
 /// Node of the list.
@@ -26,7 +22,7 @@ impl<T: Debug> Node<T> {
 #[derive(Debug)]
 pub struct SinglyLinkedList<T: Debug> {
     /// Head node of the list. If it is `None`, the list is empty.
-    head: Option<Node<T>>,
+    head: Option<Box<Node<T>>>,
 }
 
 impl<T: Debug> Default for SinglyLinkedList<T> {
@@ -43,31 +39,23 @@ impl<T: Debug> SinglyLinkedList<T> {
 
     /// Adds the given node to the front of the list.
     pub fn push_front(&mut self, value: T) {
-        let new_node = Node::new(value);
-        let new_head = Some(Box::new(new_node));
-        match self.head {
-            Some(ref mut node) => {
-                node.next = new_head;
-            }
-            None => {
-                self.head = new_head;
-            }
-        }
+        let new_node = Box::new(Node {
+            value,
+            next: self.head.take(),
+        });
+        self.head = Some(new_node);
     }
 
     /// Adds the given node to the back of the list.
     pub fn push_back(&mut self, value: T) {
-        let new_node = Node::new(value);
-        let new_node_box = Some(Box::new(new_node));
-        
-        if let Some(ref mut node) = self.head {
-            let mut current = node;
-            while let Some(ref mut next_node) = current.next {
-                current = next_node;
+        let mut new_node = Box::new(Node::new(value));
+        if let Some(mut current) = self.head.as_mut() {
+            while let Some(next) = current.next.as_mut() {
+                current = next;
             }
-            current.next = new_node_box;
+            current.next = Some(new_node);
         } else {
-            self.head = new_node_box;
+            self.head = Some(new_node);
         }
     }
 
@@ -81,18 +69,15 @@ impl<T: Debug> SinglyLinkedList<T> {
 
     /// Removes and returns the node at the back of the list.
     pub fn pop_back(&mut self) -> Option<T> {
-        let mut current = self.head.take()?;
+        let mut current = self.head.as_mut()?;
         if current.next.is_none() {
-            return Some(current.value);
+            return Some(self.head.take()?.value);
         }
-
-        let mut previous = &mut current;
-        while let Some(ref mut next_node) = previous.next {
-            if next_node.next.is_none() {
-                previous.next = None;
-                return Some(next_node.value);
+        while let Some(next) = current.next.as_mut() {
+            if next.next.is_none() {
+                return current.next.take().map(|node| node.value);
             }
-            previous = next_node;
+            current = next;
         }
         None
     }
@@ -100,7 +85,7 @@ impl<T: Debug> SinglyLinkedList<T> {
     /// Create a new list from the given vector `vec`.
     pub fn from_vec(vec: Vec<T>) -> Self {
         let mut list = Self::new();
-        for value in vec {
+        for value in vec.into_iter() {
             list.push_back(value);
         }
         list
@@ -130,34 +115,31 @@ impl<T: Debug> SinglyLinkedList<T> {
 
     /// Apply function `f` on every element of the list.
     pub fn map<F: Fn(T) -> T>(self, f: F) -> Self {
+        let mut list = SinglyLinkedList::new();
         let mut current = self.head;
-        let mut new_list = SinglyLinkedList::new();
-        
         while let Some(node) = current {
-            new_list.push_back(f(node.value));
+            list.push_back(f(node.value));
             current = node.next;
         }
-        
-        new_list
+        list
     }
 
     /// Apply given function `f` for each adjacent pair of elements in the list.
-    /// If `self.length() < 2`, do nothing.
     pub fn pair_map<F: Fn(T, T) -> T>(self, f: F) -> Self
     where
         T: Clone,
     {
+        let mut list = SinglyLinkedList::new();
         let mut current = self.head;
-        let mut new_list = SinglyLinkedList::new();
-        
-        while let Some(node) = current {
-            if let Some(next_node) = node.next.as_ref() {
-                new_list.push_back(f(node.value.clone(), next_node.value.clone()));
+        while let Some(mut node) = current {
+            if let Some(next_node) = node.next.take() {
+                list.push_back(f(node.value.clone(), next_node.value.clone()));
+                current = Some(next_node);
+            } else {
+                break;
             }
-            current = node.next;
         }
-        
-        new_list
+        list
     }
 }
 
@@ -167,21 +149,15 @@ impl<T: Debug> SinglyLinkedList<SinglyLinkedList<T>> {
     pub fn flatten(self) -> SinglyLinkedList<T> {
         let mut flat_list = SinglyLinkedList::new();
         let mut current = self.head;
-
         while let Some(node) = current {
-            flat_list.extend(node.into_vec());
+            let list = node.value;
+            let mut sub_current = list.head;
+            while let Some(sub_node) = sub_current {
+                flat_list.push_back(sub_node.value);
+                sub_current = sub_node.next;
+            }
             current = node.next;
         }
-
         flat_list
-    }
-}
-
-// Additional method to extend the SinglyLinkedList with another vector or list
-impl<T: Debug> SinglyLinkedList<T> {
-    pub fn extend(&mut self, vec: Vec<T>) {
-        for value in vec {
-            self.push_back(value);
-        }
     }
 }

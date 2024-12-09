@@ -79,11 +79,14 @@ class RustCompilerErrorParser:
                         
                         # Determine error type
                         error_class = CompilerError
+                        IsSet = False
                         for error_type in self.errors:
                             if error_code == error_type.class_code():
                                 error_class = error_type
+                                IsSet = True
                                 break
-                        
+                        if not IsSet and error_code != "E0000":
+                            error_class = GeneralError
                         # Create error instance
                         error = error_class(
                             line=line, 

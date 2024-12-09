@@ -14,6 +14,11 @@ class CompilerError:
     def __str__(self):
         return f"[E{self.ERROR_CODE:04}] at line {self.line}, column {self.column}: {self.message}"
 
+class GeneralError(CompilerError):
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 2
+        self.name = "General Error"
 
 class TypeMismatchError(CompilerError):
     ERROR_CODE = 308  # E0308: Mismatched types
