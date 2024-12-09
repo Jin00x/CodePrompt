@@ -82,12 +82,12 @@ CS454---Team-project/
 - **linked_list/src/linked_list.rs:** Contains the Rust implementation of the singly linked list.
 - **linked_list/src/test_linked_list.rs:** Contains the test cases for the singly linked list implementation.
 
-### Testing
+### Testing the source rust code
 
 1. **Navigate to the  directory:**
 
     ```sh
-    cd ../linked_list/src
+    cd ../linked_list
     ```
 
 2. **Run the tests:**
@@ -98,8 +98,8 @@ CS454---Team-project/
 
 ### Additional Information
 
-- **GA/test_capture.py:** Captures and parses the output of  to extract error codes.
+- **GA/test_capture.py:** Captures and parses the output of to extract error codes.
 - **GA/test.py:** Runs the Rust tests and prints the output.
 
-This project leverages the OpenAI API to generate and evolve Rust code, ensuring that the generated code adheres to Rust's strict ownership and borrowing rules.
+This project leverages the OpenAI API to generate and evolve prompts for the Rust code, ensuring that the generated code adheres to Rust's strict ownership and borrowing rules.
 
