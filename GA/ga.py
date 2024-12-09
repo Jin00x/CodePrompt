@@ -112,17 +112,20 @@ def GA(
 
     # create initial population
     population = []
-    for prompt in random.sample(initial_prompts, 4):
+    for prompt in random.sample(initial_prompts, 5):
         solution = Solution(
             prompt=prompt,
             code_string="",
             source_code=source_code,
             fitness=float("inf"),
-            run_fitness=True,
+            run_fitness=False,
             err_parser=err_parser,
         )
         population.append(solution)
     print("Initial Population Created")
+
+    run_api_threads(population)
+    print("Initial population Fitness Calculated")
 
     # derive best current solution
     best_solution = min(population, key=eval_fitness)
@@ -152,6 +155,9 @@ def GA(
         new_population = crossover_and_mutation_on_population(mating_pool)
         print("Crossover Done")
 
+        run_api_threads(new_population)
+        print("New population Fitness Calculated")
+
         # # mutation
         # apply_mutation_to_population(new_population, mutation_rate)
         # print("Mutation Done")
@@ -170,6 +176,21 @@ def GA(
 
     return best_solution
 
+
+def run_api_threads(population: List[Solution]) -> None:
+    threads = []
+    for i in range(len(population)):
+        threads.append(
+            threading.Thread(
+                target=population[i].eval_fitness,
+            )
+        )
+
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    return
 
 # custom fitness evaluation function
 def eval_fitness(x: Solution) -> float:
@@ -283,7 +304,7 @@ Return only the final outputs, no additional information or text needed.
                 code_string="",
                 source_code=mating_pool[0].source_code,
                 fitness=float("inf"),
-                run_fitness=True,
+                run_fitness=False,
                 err_parser=mating_pool[0].err_parser,
             )
         )
