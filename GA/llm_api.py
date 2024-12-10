@@ -19,7 +19,7 @@ client = OpenAI(
 )
 
 
-def call_openai_api(prompt, model="gpt-4o"):
+def call_openai_api(prompt, model="gpt-4o-mini"):
     # TODO: append the return structure of the response to prompt
     prompt += f"\n"
 
@@ -73,44 +73,54 @@ def run_thread(prompt, results, index):
 
 if __name__ == "__main__":
     start = time.time()
+    prompt = ""
+    with open ("/Users/coll1ns/CS454---Team-project/linked_list/src/linked_list_src.rs") as f:
+        code = f.read()
+    whole_prompt = f"""
+    {prompt} \n
+    Code: \n
+    {code} \n
+    Provide the code only, without any explanation or additional text.
+    """
+    print(call_openai_api(whole_prompt))
     # res = call_openai_api(
     #     "Write a Python function that takes a list of numbers and returns the sum of the list."
     # )
     # run the call_openai_api function twice in parallel
 
-    prompts = [
-        "Write a Python function that takes a list of numbers and returns the sum of the list.",
-        "give me a short haiku on kaist",
-        "give me a short haiku on korea and japan relationship",
-        "give me a short haiku on japan's anime industry",
-        "give me a short haiku on otaku in japan",
-        "give me a short haiku on low korean birth rate",
-    ]
+    # prompts = [
+    #     "Write a Python function that takes a list of numbers and returns the sum of the list.",
+    #     "give me a short haiku on kaist",
+    #     "give me a short haiku on korea and japan relationship",
+    #     "give me a short haiku on japan's anime industry",
+    #     "give me a short haiku on otaku in japan",
+    #     "give me a short haiku on low korean birth rate",
+    # ]
 
-    res = [None, None, None, None, None, None]
-    threads = []
-    for i in range(len(res)):
-        threads.append(
-            threading.Thread(target=run_thread, args=(prompts[i], res, i))
-        )
-    # thread1 = threading.Thread(target=run_thread, args=(prompt, res, 0))
-    # thread2 = threading.Thread(target=run_thread, args=("give me a short haiku", res, 1))
-    # thread3 = threading.Thread(target=run_thread, args=("give me a short haiku", res, 2))
+    # res = [None, None, None, None, None, None]
+    # threads = []
+    # for i in range(len(res)):
+    #     threads.append(
+    #         threading.Thread(target=run_thread, args=(prompts[i], res, i))
+    #     )
+    # # thread1 = threading.Thread(target=run_thread, args=(prompt, res, 0))
+    # # thread2 = threading.Thread(target=run_thread, args=("give me a short haiku", res, 1))
+    # # thread3 = threading.Thread(target=run_thread, args=("give me a short haiku", res, 2))
 
-    for thread in threads:
-        thread.start()
+    # for thread in threads:
+    #     thread.start()
 
-    for thread in threads:
-        thread.join()
-    # thread1.start()
-    # thread2.start()
-    # thread3.start()
+    # for thread in threads:
+    #     thread.join()
+    # # thread1.start()
+    # # thread2.start()
+    # # thread3.start()
 
-    # thread1.join()
-    # thread2.join()
-    # thread3.join()
+    # # thread1.join()
+    # # thread2.join()
+    # # thread3.join()
 
-    for r in res:
-        print(r)
-        print("------------------------------------------")
-    print(F"Time taken: {time.time() - start}")
+    # for r in res:
+    #     print(r)
+    #     print("------------------------------------------")
+    # print(F"Time taken: {time.time() - start}")

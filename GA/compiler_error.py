@@ -77,7 +77,24 @@ class MethodNotFoundError(CompilerError):
         super().__init__(line, column, message)
         self.score = 7
         self.name = "Method Not Found Error"
+class NonMutableValueAssignmentError(CompilerError):
+    ERROR_CODE = 594
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 1
+        self.name = "Non Mutable Value Assignment Error"
+class AccessToNonExistentFieldError(CompilerError):
+    ERROR_CODE = 609
+    def __init__(self, line, column, message):
+        super().__init__(line, column, message)
+        self.score = 1
+        self.name = "Non Mutable Value Assignment Error"
 
+class UnclosedDelimiterError(CompilerError):
+    def __init__(self, line = None, column = None, message = None):
+        super().__init__(line, column, message)
+        self.score = 100
+        self.name = "Unclosed Delimiter Error"
 
 class OperatorTypeError(CompilerError):
     ERROR_CODE = 369  # E0369: Cannot apply binary operator to types

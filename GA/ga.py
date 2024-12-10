@@ -69,7 +69,6 @@ class Solution:
         """
         llm_output = call_openai_api(code_prompt)
         print("OpenAI API call finished in Solution")
-        write_prompt_to_file(llm_output)
         self.code_string = llm_output[7:-3]
         return llm_output
 
@@ -175,6 +174,7 @@ def GA(
             best_solution, min(population, key=eval_fitness), key=eval_fitness
         )
         print(f"Best Solution: {best_solution.fitness}\n")
+        # print(f"Best Solution code: {best_solution.code_string}\n")
         write_prompt_to_file(best_solution.prompt)
 
     return best_solution
@@ -306,7 +306,6 @@ Return only the final outputs, no additional information or text needed.
     new_prompts = call_openai_api(prompt)
     # parse the new prompts
 
-    write_prompt_to_file(new_prompts)
 
     new_prompts = parse_crossover_and_mutation_prompts(new_prompts)
     for prompt in new_prompts:
@@ -482,7 +481,7 @@ def improved_fps(
 
 if __name__ == "__main__":
     solution = GA(
-        generation_limit=10,
+        generation_limit=20,
         mating_pool_size=9
     )
     print(f"Best Solution: {solution.prompt}\n")
