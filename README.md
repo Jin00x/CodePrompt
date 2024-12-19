@@ -19,13 +19,19 @@ CS454---Team-project/
 │   └── test.py
 ├── initial_prompts/
 │   └── init_prompts.json
-├── linked_list/
+├── rust_examples/
 │   ├── Cargo.lock
 │   ├── Cargo.toml
 │   └── src/
-│       ├── linked_list.rs
-│       ├── linked_list_src.rs
-│       └── test_linked_list.rs
+│       └── linked_list/
+│           ├── linked_list.rs
+│           ├── linked_list_src.rs
+│           └── test_linked_list.rs
+│       └── graph/
+│           ├── graph.rs
+│           ├── graph_src.rs
+│           └── test_graph.rs
+│       ...
 ├── .gitignore
 ├── README.md
 └── requirements.txt
@@ -70,7 +76,7 @@ CS454---Team-project/
 2. **Run the genetic algorithm:**
 
     ```sh
-    python ga.py
+    python ga.py --file <file_name>
     ```
 
 ### Code Details
@@ -79,8 +85,8 @@ CS454---Team-project/
 - **GA/error_message_parser.py:** Parses the output of Rust compiler errors and test results.
 - **GA/llm_api.py:** Interfaces with the OpenAI API to generate and mutate code prompts.
 - **initial_prompts/init_prompts.json:** Contains the initial prompts used to generate the initial population of solutions.
-- **linked_list/src/linked_list.rs:** Contains the Rust implementation of the singly linked list.
-- **linked_list/src/test_linked_list.rs:** Contains the test cases for the singly linked list implementation.
+- **rust_examples/src/{project}/{project.rs} Contains the source code of the project 
+- **rust_examples/src/{project}/{test_project.rs} Contains the test cases for project
 
 ### Testing the source rust code
 

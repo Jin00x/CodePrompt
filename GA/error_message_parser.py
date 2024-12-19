@@ -9,12 +9,14 @@ import os
 # FIXME class doesn't only parse the compiler errors now as well, it parses the normal test output as well
 #so the name should be changed to RustTestOutputParser or something similar
 class RustCompilerErrorParser:
-    def __init__(self, project_path):
+    def __init__(self, project_path, code):
         """
         Initialize the parser with the path to the Rust project
         @param: project_path: Path to the Rust project root directory
+        @param: code: The code to be tested, it is used in cargo test
         """
         self.project_path = project_path
+        self.code = code 
         self.errors = (
             #TODO: Add more error classes
             OwnershipError,
@@ -47,7 +49,7 @@ class RustCompilerErrorParser:
 
             # Run cargo test with JSON output
             result = subprocess.run(
-                ['cargo', 'test', '--message-format=json'], #enable running as well..  
+                ['cargo', 'test', self.code, '--message-format=json'], #enable running as well..  
                 capture_output=True, 
                 text=True
             )
@@ -155,14 +157,14 @@ def main():
     current_file_path = os.path.dirname(__file__)
 
     # Construct the relative path
-    folder2_path = os.path.join(current_file_path, '../linked_list')
+    folder2_path = os.path.join(current_file_path, '../rust_examples')
 
     # Resolve to an absolute path
     project_path = os.path.abspath(folder2_path)
 
     print(project_path)    
     # Create parser instance
-    parser = RustCompilerErrorParser(project_path)
+    parser = RustCompilerErrorParser(project_path, "graph")
     
     # Parse errors
     errors = parser.parse_cargo_test_output()

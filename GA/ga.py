@@ -5,6 +5,7 @@ import random
 import numpy as np
 import json
 import re
+import argparse
 
 from error_message_parser import RustCompilerErrorParser
 from compiler_error import CompilerError
@@ -13,6 +14,7 @@ from compiler_error import CompilerError
 class Solution:
     def __init__(
         self,
+        rust_source_code = "",
         prompt: str = "",
         code_string: str = "",
         source_code: str = "",
@@ -25,7 +27,7 @@ class Solution:
         self.source_code = source_code
         self.fitness = fitness
         self.err_parser = err_parser
-
+        self.rust_source_code = rust_source_code
         if run_fitness is True:
             self.eval_fitness()
 
@@ -35,7 +37,8 @@ class Solution:
         self.generate_code()
 
         # write the code to the linked_list_src.rs file
-        with open("../linked_list/src/linked_list.rs", "w") as file:
+        # with open(f"../rust_examples/src/{self.rust_code}/{self.rust_code}.rs", "w") as file:
+        with open(self.rust_source_code, "w") as file:
             file.write(self.code_string)
 
         # run the code, collect the errors from parser
@@ -81,6 +84,7 @@ class Solution:
 def GA(
     initial_population_size: int = 50,
     mating_pool_size: int = 10,
+    input_code: str = "linked_list",
     selection_type: NextGenSelectionType = NextGenSelectionType.TRS,
     selection_type_prob_type: Union[RBSType, FPSType] = RBSType.LINEAR_RANKING,
     tournament_selection_size_k: int = 4,
@@ -94,12 +98,11 @@ def GA(
     current_file_path = os.path.dirname(__file__)
     project_folder_path = os.path.dirname(current_file_path)
 
-    folder_path = os.path.join(current_file_path, "../linked_list")
-    project_path = os.path.abspath(folder_path)
+    rust_code_folder_path = os.path.join(current_file_path, "../rust_examples")
 
     # create instance of Rust error parser
-    err_parser = RustCompilerErrorParser(project_path)
-
+    err_parser = RustCompilerErrorParser(os.path.abspath(rust_code_folder_path), input_code)
+    rust_source_code = rust_code_folder_path + f"/src/{input_code}/{input_code}.rs"
     # read from the initial prompts json file
     initial_prompts = []
     with open(f"{project_folder_path}/initial_prompts/init_prompts.json", "r") as file:
@@ -107,13 +110,14 @@ def GA(
         initial_prompts = initial_prompts["prompts"]
 
     source_code = ""
-    with open(f"{project_folder_path}/linked_list/src/linked_list_src.rs", "r") as file:
+    with open(f"{project_folder_path}/rust_examples/src/{input_code}/{input_code}_src.rs", "r") as file:
         source_code = file.read()
 
     # create initial population
     population = []
     for prompt in initial_prompts:
         solution = Solution(
+            rust_source_code=rust_source_code,
             prompt=prompt,
             code_string="",
             source_code=source_code,
@@ -480,9 +484,14 @@ def improved_fps(
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Genetic Algorithm with file input')
+    parser.add_argument('--file', type=str, help='Input file name', required=True)
+    args = parser.parse_args()
+
     solution = GA(
         generation_limit=20,
-        mating_pool_size=9
+        mating_pool_size=9,
+        input_code = args.file
     )
     print(f"Best Solution: {solution.prompt}\n")
     print(f"Best Fitness: {solution.fitness}\n")
