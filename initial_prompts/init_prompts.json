@@ -1,5 +1,5 @@
 {
-    "prompts": [
+    "linked_list": [
       "",
       "I want to write a single linked list in rust, please implement the following functions",
       "Given that you should satisfy the borrow checker for rust compiler, please implement the following functions",
@@ -46,6 +46,36 @@
       "Build a linked list implementation that supports advanced list transformations and conversions.",
       "Design a Rust singly linked list with robust error handling and memory-safe operations.",
       "Write a comprehensive generic linked list that showcases Rust's type system and functional programming capabilities."
+    ],
+    "graph" : [
+      "",
+      "I want to write a graph in rust, please implement the following functions",
+      "Given that you should satisfy the borrow checker for rust compiler, please implement the following functions",
+      "Rust has tedious ownership and move semantics, please implement the following functions satisfying the proper move semantics and ownership handling",
+      "According to move semantics of rust, for a generic parameter T which doesn’t implement copy trait, it moves the ownership of the value to another variable. Using this implement the graph for a nodes that contain generic data type T",
+      "Rust has alias xor mutation, knowing this please implement following graph functions",
+      "Implement a fully functional graph data structure in Rust with methods for basic graph manipulation.",
+      "Create a generic graph implementation that supports push, pop, mapping, and conversion operations.",
+      "Design a graph with robust error handling and memory-efficient operations using Rust's ownership system.",
+      "Write a complete Rust implementation of a graph with methods to add, remove, and transform elements.",
+      "Develop a type-safe, generic graph with advanced operations like pair mapping and list flattening.",
+      "Build a memory-efficient graph implementation that leverages Rust's Box type for dynamic memory management.",
+      "Implement a comprehensive graph data structure with methods for front and back manipulation.",
+      "Create a Rust graph that supports functional programming-style transformations and conversions.",
+      "Design a generic graph with methods for adding, removing, and transforming elements using closures.",
+      "Write a complete Rust graph implementation focusing on performance and memory efficiency.",
+      "Develop a type-generic graph with methods for vector conversion, mapping, and list manipulation.",
+      "Implement a graph with advanced operations like element mapping and list flattening.",
+      "Create a Rust graph that supports dynamic element insertion, removal, and transformation.",
+      "Build a generic graph with robust methods for front and back element operations.",
+      "Design a memory-safe graph implementation with flexible transformation capabilities.",
+      "Write a comprehensive Rust graph that supports vector conversion and functional-style transformations.",
+      "Implement a type-safe graph with methods for adding, removing, and mapping elements.",
+      "Develop a generic graph in Rust with support for complex list manipulation operations.",
+      "Create a graph implementation that demonstrates Rust's ownership and borrowing principles.",
+      "Build a flexible, generic graph with methods for element transformation and list flattening.",
+      "Design a Rust graph that efficiently manages memory and supports advanced list operations.",
+      "Write a graph implementation with robust methods"
     ]
-  }
+}
   

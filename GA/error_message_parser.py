@@ -74,9 +74,9 @@ class RustCompilerErrorParser:
                         if code:
                             error_code = code.get('code', '')
                         else:
-                            if "unclosed delimiter" in error_details.get('message', {}):
+                            if "unclosed delimiter" in error_details.get('message', {}) or "closed delimiter" in error_details.get('message', {}):
                                errors.append(
-                                      UnclosedDelimiterError()
+                                      DelimiterError()
                                )
                             continue
                         spans = error_details.get('spans', [{}])[0]

@@ -90,11 +90,11 @@ class AccessToNonExistentFieldError(CompilerError):
         self.score = 1
         self.name = "Non Mutable Value Assignment Error"
 
-class UnclosedDelimiterError(CompilerError):
+class DelimiterError(CompilerError):
     def __init__(self, line = None, column = None, message = None):
         super().__init__(line, column, message)
         self.score = 100
-        self.name = "Unclosed Delimiter Error"
+        self.name = "Delimiter Error"
 
 class OperatorTypeError(CompilerError):
     ERROR_CODE = 369  # E0369: Cannot apply binary operator to types

@@ -26,7 +26,7 @@ impl<T: Debug> Node<T> {
 #[derive(Debug)]
 pub struct SinglyLinkedList<T: Debug> {
     /// Head node of the list. If it is `None`, the list is empty.
-    head: Option<Node<T>>,
+    head: Option<Box<Node<T>>>,
 }
 
 impl<T: Debug> Default for SinglyLinkedList<T> {
@@ -43,20 +43,20 @@ impl<T: Debug> SinglyLinkedList<T> {
 
     /// Adds the given node to the front of the list.
     pub fn push_front(&mut self, value: T) {
-        let new_node = Node::new(value);
-        new_node.next = self.head.take().map(Box::new);
+        let new_node = Box::new(Node::new(value));
+        new_node.next = self.head.take();
         self.head = Some(new_node);
     }
 
     /// Adds the given node to the back of the list.
     pub fn push_back(&mut self, value: T) {
-        let new_node = Node::new(value);
-        if let Some(head) = &mut self.head {
+        let new_node = Box::new(Node::new(value));
+        if let Some(ref mut head) = self.head {
             let mut current = head;
-            while let Some(next) = &mut current.next {
+            while let Some(ref next) = current.next {
                 current = next;
             }
-            current.next = Some(Box::new(new_node));
+            current.next = Some(new_node);
         } else {
             self.head = Some(new_node);
         }
@@ -72,27 +72,28 @@ impl<T: Debug> SinglyLinkedList<T> {
 
     /// Removes and returns the node at the back of the list.
     pub fn pop_back(&mut self) -> Option<T> {
-        let mut current = self.head.take()?;
+        let mut current = self.head.as_mut()?;
         let mut prev = None;
 
-        while let Some(next) = current.next {
+        while current.next.is_some() {
             prev = Some(current);
-            current = *next;
+            current = current.next.as_mut()?;
         }
 
-        if let Some(mut last_node) = prev {
-            last_node.next = None;
-            self.head = Some(last_node);
-            Some(current.value)
+        let value = current.value;
+
+        if let Some(prev_node) = prev {
+            prev_node.next = None;
         } else {
             self.head = None;
-            Some(current.value)
         }
+
+        Some(value)
     }
 
     /// Create a new list from the given vector `vec`.
     pub fn from_vec(vec: Vec<T>) -> Self {
-        let mut list = SinglyLinkedList::new();
+        let mut list = Self::new();
         for value in vec {
             list.push_back(value);
         }
@@ -127,7 +128,7 @@ impl<T: Debug> SinglyLinkedList<T> {
     ///
     /// `self`: `[1, 2]`, `f`: `|x| x + 1` ==> `[2, 3]`
     pub fn map<F: Fn(T) -> T>(self, f: F) -> Self {
-        let mut new_list = SinglyLinkedList::new();
+        let mut new_list = Self::new();
         let mut current = self.head;
         while let Some(node) = current {
             new_list.push_back(f(node.value));
@@ -142,23 +143,22 @@ impl<T: Debug> SinglyLinkedList<T> {
     /// # Examples
     ///
     /// `self`: `[1, 2, 3, 4]`, `f`: `|x, y| x + y`
+    /// // each adjacent pair of elements: `(1, 2)`, `(2, 3)`, `(3, 4)`
+    /// // apply `f` to each pair: `f(1, 2) == 3`, `f(2, 3) == 5`, `f(3, 4) == 7`
     /// ==> `[3, 5, 7]`
     pub fn pair_map<F: Fn(T, T) -> T>(self, f: F) -> Self
     where
         T: Clone,
     {
-        let mut new_list = SinglyLinkedList::new();
+        let mut new_list = Self::new();
         let mut current = self.head;
 
         while let Some(node) = current {
             if let Some(next_node) = node.next.as_ref() {
                 new_list.push_back(f(node.value.clone(), next_node.value.clone()));
-                current = next_node.next;
-            } else {
-                break;
             }
+            current = node.next;
         }
-        
         new_list
     }
 }
@@ -171,20 +171,17 @@ impl<T: Debug> SinglyLinkedList<SinglyLinkedList<T>> {
     /// `self`: `[[1, 2, 3], [4, 5, 6], [7, 8]]`
     /// ==> `[1, 2, 3, 4, 5, 6, 7, 8]`
     pub fn flatten(self) -> SinglyLinkedList<T> {
-        let mut flattened_list = SinglyLinkedList::new();
+        let mut new_list = SinglyLinkedList::new();
         let mut current = self.head;
 
         while let Some(node) = current {
             let mut inner_current = node.value.head;
-
             while let Some(inner_node) = inner_current {
-                flattened_list.push_back(inner_node.value);
+                new_list.push_back(inner_node.value);
                 inner_current = inner_node.next;
             }
-
             current = node.next;
         }
-
-        flattened_list
+        new_list
     }
 }

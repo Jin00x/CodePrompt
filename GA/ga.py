@@ -107,7 +107,7 @@ def GA(
     initial_prompts = []
     with open(f"{project_folder_path}/initial_prompts/init_prompts.json", "r") as file:
         initial_prompts = json.load(file)
-        initial_prompts = initial_prompts["prompts"]
+        initial_prompts = initial_prompts[input_code]
 
     source_code = ""
     with open(f"{project_folder_path}/rust_examples/src/{input_code}/{input_code}_src.rs", "r") as file:
@@ -178,6 +178,8 @@ def GA(
             best_solution, min(population, key=eval_fitness), key=eval_fitness
         )
         print(f"Best Solution: {best_solution.fitness}\n")
+        if best_solution.fitness == 0:
+            break
         # print(f"Best Solution code: {best_solution.code_string}\n")
         write_prompt_to_file(best_solution.prompt)
 
@@ -317,6 +319,7 @@ Return only the final outputs, no additional information or text needed.
             Solution(
                 prompt=prompt,
                 code_string="",
+                rust_source_code=mating_pool[0].rust_source_code, #we put it here as well. 
                 source_code=mating_pool[0].source_code,
                 fitness=float("inf"),
                 run_fitness=False,
