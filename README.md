@@ -1,68 +1,29 @@
-# CS454 Team Project
-CS454 | Team 8 | Project
+# EvoPrompt for Code: Extending EvoPrompt for the Rust Code generation
+EvoPrompt paper: [Connecting Large Language Models with Evolutionary Algorithms Yields Powerful Prompt Optimizers](https://arxiv.org/abs/2309.08532)
+
+## Abstract
+EvoPrompt is a framework for optimizing discrete prompts by combining the language processing power of large language models (LLMs) with the efficient search capabilities of evolutionary algorithms (EAs). By starting with an initial population of prompts, EvoPrompt iteratively improves them using LLM-based generation and EA-inspired selection, achieving state-of-the-art performance on tasks across 31 datasets. This approach automates prompt creation and significantly outperforms human-engineered and existing automatic methods, showcasing the potential of integrating LLMs with conventional algorithms for better optimization.
+
+## Proposal
+One of the most productive use of generative models is code generation. However, generating high quality code that satisfies all the requirements is a challenging task. EvoPrompt framework doesn't address this aspect of LLM generation; thus, our project aims to extend EvoPrompt to generate the best prompt for the Rust code generation. The project uses the Rust codebase for number of different functionalities as the source code and evolves the prompt to generate the best prompt for the Rust code generation.
 
 ## Implementation Details
 
 This project implements a genetic algorithm (GA) to generate the best promptfor the Rust code for a singly linked list. The GA evolves solutions over multiple generations to optimize the prompt based on fitness values.
 
-### Project Structure
-````markdown
-The project is organized as follows:
-
-CS454---Team-project/
-├── GA/
-│   ├── __init__.py
-│   ├── error_message_parser.py
-│   ├── ga.py
-│   ├── llm_api.py
-│   ├── test_capture.py
-│   └── test.py
-├── initial_prompts/
-│   └── init_prompts.json
-├── rust_examples/
-│   ├── Cargo.lock
-│   ├── Cargo.toml
-│   └── src/
-│       └── linked_list/
-│           ├── linked_list.rs
-│           ├── linked_list_src.rs
-│           └── test_linked_list.rs
-│       └── graph/
-│           ├── graph.rs
-│           ├── graph_src.rs
-│           └── test_graph.rs
-│       ...
-├── .gitignore
-├── README.md
-└── requirements.txt
-````
+## Quick Start
 
 ### Setup Instructions
 
-1. **Create a virtual environment:**
-
-    ```sh
-    python -m venv venv
-    ```
-
-2. **Activate the virtual environment:**
-
-    - On Windows:
-
-        ```sh
-        .\venv\Scripts\activate
-        ```
-
-    - On macOS/Linux:
-
-        ```sh
-        source venv/bin/activate
-        ```
-
-3. **Install the required dependencies:**
+1. **Install the required dependencies:**
 
     ```sh
     pip install -r requirements.txt
+    ```
+2. **Add you OpenAI Key to .env file in root directory:**
+
+    ```sh
+    LLM_API_KEY=<your_key_here>
     ```
 
 ### Running the Genetic Algorithm
@@ -106,6 +67,3 @@ CS454---Team-project/
 
 - **GA/test_capture.py:** Captures and parses the output of to extract error codes.
 - **GA/test.py:** Runs the Rust tests and prints the output.
-
-This project leverages the OpenAI API to generate and evolve prompts for the Rust code, ensuring that the generated code adheres to Rust's strict ownership and borrowing rules.
-
