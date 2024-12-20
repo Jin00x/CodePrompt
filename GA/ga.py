@@ -6,10 +6,9 @@ import numpy as np
 import json
 import re
 import argparse
-
 from error_message_parser import RustCompilerErrorParser
 from compiler_error import CompilerError
-
+import shutil
 
 class Solution:
     def __init__(
@@ -27,6 +26,7 @@ class Solution:
         self.source_code = source_code
         self.fitness = fitness
         self.err_parser = err_parser
+        self.error_report = None
         self.rust_source_code = rust_source_code
         if run_fitness is True:
             self.eval_fitness()
@@ -44,7 +44,7 @@ class Solution:
         # run the code, collect the errors from parser
         error_report = self.err_parser.generate_report()
         score = error_report["total_score"]
-
+        self.error_report = error_report
         print("Score from err parser: ", error_report)
 
         # print(len(errors), "errors found")
@@ -102,7 +102,7 @@ def GA(
 
     # create instance of Rust error parser
     err_parser = RustCompilerErrorParser(os.path.abspath(rust_code_folder_path), input_code)
-    rust_source_code = rust_code_folder_path + f"/src/{input_code}/{input_code}.rs"
+    rust_source_code = rust_code_folder_path + f"/{input_code}/src/{input_code}.rs"
     # read from the initial prompts json file
     initial_prompts = []
     with open(f"{project_folder_path}/initial_prompts/init_prompts.json", "r") as file:
@@ -110,7 +110,7 @@ def GA(
         initial_prompts = initial_prompts[input_code]
 
     source_code = ""
-    with open(f"{project_folder_path}/rust_examples/src/{input_code}/{input_code}_src.rs", "r") as file:
+    with open(f"{project_folder_path}/rust_examples/{input_code}/src/{input_code}_src.rs", "r") as file:
         source_code = file.read()
 
     # create initial population
@@ -179,6 +179,7 @@ def GA(
         )
         print(f"Best Solution: {best_solution.fitness}\n")
         if best_solution.fitness == 0:
+            print("Error report of best solution", best_solution.error_report)
             break
         # print(f"Best Solution code: {best_solution.code_string}\n")
         write_prompt_to_file(best_solution.prompt)
@@ -490,7 +491,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Genetic Algorithm with file input')
     parser.add_argument('--file', type=str, help='Input file name', required=True)
     args = parser.parse_args()
-
     solution = GA(
         generation_limit=20,
         mating_pool_size=9,

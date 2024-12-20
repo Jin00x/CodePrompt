@@ -49,33 +49,152 @@
     ],
     "graph" : [
       "",
-      "I want to write a graph in rust, please implement the following functions",
+      "Implement a directed graph data structure in Rust with shared mutable nodes using Rc and RefCell",
+
+      "Create a graph implementation that handles shared mutable state using Rust's smart pointers, with methods for edge manipulation",
+
+      "Design a graph structure in Rust that allows multiple handles to the same node while maintaining memory safety",
+
+      "Implement a graph system that supports subgraphs and cycle detection while respecting Rust's borrowing rules",
+
+      "Create a directed graph implementation that uses Rc<RefCell<T>> to handle shared mutable state correctly",
+
+      "Build a graph data structure in Rust that allows nodes to be part of multiple subgraphs simultaneously",
+
+      "Implement a graph system with NodeHandle type that safely manages shared access to nodes",
+
+      "Design a graph implementation that uses smart pointers to handle directed edges between nodes",
+
+      "Create a graph structure that supports cycle detection in subgraphs while maintaining Rust's ownership rules",
+
+      "Implement a graph where nodes can have multiple handles but maintain safe interior mutability",
+
+      "Build a directed graph system with proper error handling for aliasing and mutation conflicts",
+
+      "Design a graph implementation that allows safe modification of edges through node handles",
+
+      "Create a graph structure that supports subgraph operations with proper borrow checking",
+
+      "Implement a graph system that uses RefCell for interior mutability in node connections",
+
+      "Build a directed graph that properly handles shared ownership of nodes across multiple subgraphs",
+
+      "Design a graph implementation focusing on safe concurrent access to nodes through handles",
+
+      "Create a graph structure that manages directed edges while preventing aliasing violations",
+
+      "Implement a graph system with robust cycle detection in arbitrary subgraphs",
+
+      "Build a graph implementation that handles shared mutable state without compromising memory safety",
+
+      "Design a directed graph that supports dynamic edge manipulation with proper error handling",
+
+      "Create a graph system that allows multiple references to nodes while maintaining data consistency",
+
+      "Implement a graph structure that supports subgraph operations and cycle detection efficiently",
+
+      "Build a graph implementation that uses smart pointers to handle shared node ownership",
+
+      "Design a graph system that properly manages node relationships across multiple subgraphs",
+
+      "Create a directed graph with safe interior mutability for edge modifications",
+
+      "Implement a graph structure that supports multiple node handles without violating Rust's aliasing rules",
+
+      "Build a graph system with proper error handling for concurrent modification attempts",
+
+      "Design a graph implementation that safely manages shared access to node data",
+
+      "Create a graph structure that handles cyclic references while maintaining memory safety",
+
+      "Implement a directed graph with support for dynamic subgraph manipulation",
+
+      "Build a graph system that allows safe modification of edges through multiple handles",
+
+      "Design a graph implementation that handles shared mutable state in subgraph operations",
+
+      "Create a graph structure with robust cycle detection and proper ownership management",
+
+      "Implement a graph system that uses RefCell and Rc for safe shared access",
+
+      "Build a directed graph that supports multiple subgraph memberships for nodes",
+
+      "Design a graph implementation with proper error handling for concurrent modifications",
+
+      "Create a graph structure that maintains Rust's borrowing rules in all operations",
+
+      "Implement a graph system with safe interior mutability for node connections",
+
+      "Build a graph implementation that handles shared ownership across subgraphs",
+
+      "Design a directed graph with proper memory management and cycle detection",
+
+      "Create a graph structure that supports multiple handles to nodes while preventing data races",
+
+      "Implement a graph system with robust error handling for aliasing violations",
+
+      "Build a graph implementation that maintains consistency across multiple subgraphs",
+
+      "Design a directed graph that properly manages shared mutable state in all operations"
+    ],
+    "mock_storage" : [
+      "",
+      "I want to write a mock storage in rust, please implement the following functions",
       "Given that you should satisfy the borrow checker for rust compiler, please implement the following functions",
       "Rust has tedious ownership and move semantics, please implement the following functions satisfying the proper move semantics and ownership handling",
-      "According to move semantics of rust, for a generic parameter T which doesn’t implement copy trait, it moves the ownership of the value to another variable. Using this implement the graph for a nodes that contain generic data type T",
-      "Rust has alias xor mutation, knowing this please implement following graph functions",
-      "Implement a fully functional graph data structure in Rust with methods for basic graph manipulation.",
-      "Create a generic graph implementation that supports push, pop, mapping, and conversion operations.",
-      "Design a graph with robust error handling and memory-efficient operations using Rust's ownership system.",
-      "Write a complete Rust implementation of a graph with methods to add, remove, and transform elements.",
-      "Develop a type-safe, generic graph with advanced operations like pair mapping and list flattening.",
-      "Build a memory-efficient graph implementation that leverages Rust's Box type for dynamic memory management.",
-      "Implement a comprehensive graph data structure with methods for front and back manipulation.",
-      "Create a Rust graph that supports functional programming-style transformations and conversions.",
-      "Design a generic graph with methods for adding, removing, and transforming elements using closures.",
-      "Write a complete Rust graph implementation focusing on performance and memory efficiency.",
-      "Develop a type-generic graph with methods for vector conversion, mapping, and list manipulation.",
-      "Implement a graph with advanced operations like element mapping and list flattening.",
-      "Create a Rust graph that supports dynamic element insertion, removal, and transformation.",
-      "Build a generic graph with robust methods for front and back element operations.",
-      "Design a memory-safe graph implementation with flexible transformation capabilities.",
-      "Write a comprehensive Rust graph that supports vector conversion and functional-style transformations.",
-      "Implement a type-safe graph with methods for adding, removing, and mapping elements.",
-      "Develop a generic graph in Rust with support for complex list manipulation operations.",
-      "Create a graph implementation that demonstrates Rust's ownership and borrowing principles.",
-      "Build a flexible, generic graph with methods for element transformation and list flattening.",
-      "Design a Rust graph that efficiently manages memory and supports advanced list operations.",
-      "Write a graph implementation with robust methods"
+      "According to move semantics of rust, for a generic parameter T which doesn’t implement copy trait, it moves the ownership of the value to another variable. Using this implement the mock storage for a nodes that contain generic data type T",
+      "Rust has alias xor mutation, knowing this please implement following mock storage functions",
+      "Implement a fully functional mock storage data structure in Rust with methods for basic mock storage manipulation.",
+      "Create a generic mock storage implementation that supports push, pop, mapping, and conversion operations.",
+      "Design a mock storage with robust error handling and memory-efficient operations using Rust's ownership system.",
+      "Write a complete Rust implementation of a mock storage with methods to add, remove, and transform elements.",
+      "Develop a type-safe, generic mock storage with advanced operations like pair mapping and list flattening.",
+      "Build a memory-efficient mock storage implementation that leverages Rust's Box type for dynamic memory management.",
+      "Implement a comprehensive mock storage data structure with methods for front and back manipulation.",
+      "Create a Rust mock storage that supports functional programming-style transformations and conversions.",
+      "Design a generic mock storage with methods for adding, removing, and transforming elements using closures.",
+      "Write a complete Rust mock storage implementation focusing on performance and memory efficiency.",
+      "Develop a type-generic mock storage with methods for vector conversion, mapping, and list manipulation.",
+      "Implement a mock storage with advanced operations like element mapping and list flattening.",
+      "Create a Rust mock storage that supports dynamic element insertion, removal, and transformation.",
+      "Build a generic mock storage with robust methods for front and back element operations.",
+      "Design a memory-safe mock storage implementation with flexible transformation capabilities.",
+      "Write a comprehensive Rust mock storage that supports vector conversion and functional-style transformations.",
+      "Implement a type-safe mock storage with methods for adding, removing, and mapping elements.",
+      "Develop a generic mock storage in Rust with support for complex list manipulation operations.",
+      "Create a mock storage implementation that demonstrates Rust's ownership and borrowing principles.",
+      "Build a flexible, generic mock storage with methods for element transformation and list flattening.",
+      "Design a Rust mock storage that efficiently manages memory and supports advanced list operations.",
+      "Write a mock storage implementation with robust methods for front and back element manipulation.",
+      "Implement a generic mock storage with vector conversion and pair mapping capabilities.",
+      "Create a Rust mock storage that showcases type-safe list operations and functional programming techniques."
+    ],
+    "church" : [
+      "",
+      "I want to write a church encoding in rust, please implement the following functions",
+      "Given that you should satisfy the borrow checker for rust compiler, please implement the following functions",
+      "Rust has tedious ownership and move semantics, please implement the following functions satisfying the proper move semantics and ownership handling",
+      "According to move semantics of rust, for a generic parameter T which doesn’t implement copy trait, it moves the ownership of the value to another variable. Using this implement the church encoding for a nodes that contain generic data type T",
+      "Rust has alias xor mutation, knowing this please implement following church encoding functions",
+      "Implement a fully functional church encoding data structure in Rust with methods for basic church encoding manipulation.",
+      "Utilizing the imports of the source code, create a church encoding implementation in Rust",
+      "Design a church encoding with robust error handling and memory-efficient operations using Rust's ownership system.",
+      "Write a complete Rust implementation of a church encoding with methods to add, sub, multiply, and so on operations elements.",
+      "Develop a type-safe, generic church encoding with advanced operations like reference count cloning",
+      "Build a memory-efficient church encoding implementation that leverages Rust's Box type for dynamic memory management."
+    ],
+    "bigint" : [
+      "",
+      "I want to write a big integer in rust, please implement the following functions",
+      "Given that you should satisfy the borrow checker for rust compiler, please implement the following functions",
+      "Rust has tedious ownership and move semantics, please implement the following functions satisfying the proper move semantics and ownership handling",
+      "According to move semantics of rust, for a generic parameter T which doesn’t implement copy trait, it moves the ownership of the value to another variable. Using this implement the big integer",
+      "Rust has alias xor mutation, knowing this please implement following big integer functions",
+      "Implement a fully functional big integer data structure in Rust with methods for basic big integer manipulation.",
+      "Create a generic big integer implementation that supports push, pop, mapping, and conversion operations.",
+      "Design a big integer with robust error handling and memory-efficient operations using Rust's ownership system.",
+      "Write a complete Rust implementation of a big integer with methods of adddition, substraction, multiplication elements.",
+      "Develop a type-safe big integer. But be careful, this one has lots of edge cases, and hard logic behind it. So double check what you writing"
     ]
 }
   

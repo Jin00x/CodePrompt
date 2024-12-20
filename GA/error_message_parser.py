@@ -45,11 +45,11 @@ class RustCompilerErrorParser:
         try:
             # Change to the project directory
             original_dir = os.getcwd()
-            os.chdir(self.project_path)
+            os.chdir(self.project_path + '/'+ self.code)
 
             # Run cargo test with JSON output
             result = subprocess.run(
-                ['cargo', 'test', self.code, '--message-format=json'], #enable running as well..  
+                ['cargo', 'test', '--message-format=json'], #enable running as well..  
                 capture_output=True, 
                 text=True
             )
@@ -74,7 +74,7 @@ class RustCompilerErrorParser:
                         if code:
                             error_code = code.get('code', '')
                         else:
-                            if "unclosed delimiter" in error_details.get('message', {}) or "closed delimiter" in error_details.get('message', {}):
+                            if "delimiter" in error_details.get('message', {}):
                                errors.append(
                                       DelimiterError()
                                )
@@ -164,7 +164,7 @@ def main():
 
     print(project_path)    
     # Create parser instance
-    parser = RustCompilerErrorParser(project_path, "graph")
+    parser = RustCompilerErrorParser(project_path, "church")
     
     # Parse errors
     errors = parser.parse_cargo_test_output()
