@@ -4,7 +4,7 @@ EvoPrompt paper: [Connecting Large Language Models with Evolutionary Algorithms 
 ## Abstract
 EvoPrompt is a framework for optimizing discrete prompts by combining the language processing power of large language models (LLMs) with the efficient search capabilities of evolutionary algorithms (EAs). By starting with an initial population of prompts, EvoPrompt iteratively improves them using LLM-based generation and EA-inspired selection, achieving state-of-the-art performance on tasks across 31 datasets. This approach automates prompt creation and significantly outperforms human-engineered and existing automatic methods, showcasing the potential of integrating LLMs with conventional algorithms for better optimization.
 
-## Proposal
+## Motivation
 One of the most productive use of generative models is code generation. However, generating high quality code that satisfies all the requirements is a challenging task. EvoPrompt framework doesn't address this aspect of LLM generation; thus, our project aims to extend EvoPrompt to generate the best prompt for the Rust code generation. The project uses the Rust codebase for number of different functionalities as the source code and evolves the prompt to generate the best prompt for the Rust code generation.
 
 ## Implementation Details
